@@ -12,3 +12,20 @@ git mergetool
 即使进入真实冲突，Git 也提示你没配置工具。你可以先指定一个：
 git config --global merge.tool vimdiff
 （如果你装了 TortoiseGit，也可以配置 tortoisemerge。）
+or
+    // ========== 如何解决合并冲突 ==========
+    /*
+     * 解决步骤：
+     * 1. 打开冲突文件，找到 <<<<<<< HEAD 和 >>>>>>> 标记
+     * 2. 查看两个版本的差异
+     * 3. 选择保留哪个版本，或合并两个版本
+     * 4. 删除所有冲突标记（<<<<<<<, =======, >>>>>>>）
+     * 5. 保存文件
+     * 6. 使用 git add 标记冲突已解决
+     * 7. 继续合并：git commit
+     *
+     * IDE 工具（如 IntelliJ IDEA）通常提供可视化界面：
+     * - 点击 "Accept Yours" 保留当前分支
+     * - 点击 "Accept Theirs" 保留合并分支
+     * - 点击 "Merge" 手动合并
+     */
