@@ -58,7 +58,7 @@ public class SwingBranchEncryptApp extends JFrame {
         hostField = new JTextField("127.0.0.1");
         portField = new JTextField("3306");
         userField = new JTextField("root");
-        passField = new JTextField("");
+        passField = new JTextField("123456");
         dbField = new JTextField("xx_branch_trans");
         tableField = new JTextField("xx_customer_trans");
         aesKeyField = new JTextField("1234567890abcdef"); // 16 bytes demo key
