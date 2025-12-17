@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.xml.bind.DatatypeConverter;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -333,13 +332,40 @@ public class SwingBranchEncryptApp extends JFrame {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
         byte[] out = cipher.doFinal(plain.getBytes(UTF8));
-        return DatatypeConverter.printBase64Binary(out);
+        return base64Encode(out);
     }
 
     private String sha256Hex(String data) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] digest = md.digest(data.getBytes(UTF8));
-        return DatatypeConverter.printHexBinary(digest).toLowerCase();
+        return bytesToHex(digest).toLowerCase();
+    }
+
+    // JDK7 兼容的 Base64 编码（简易实现）
+    private String base64Encode(byte[] data) {
+        final char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < data.length) {
+            int b1 = data[i++] & 0xFF;
+            int b2 = i < data.length ? data[i++] & 0xFF : 0;
+            int b3 = i < data.length ? data[i++] & 0xFF : 0;
+            int bitmap = (b1 << 16) | (b2 << 8) | b3;
+            sb.append(chars[(bitmap >> 18) & 0x3F]);
+            sb.append(chars[(bitmap >> 12) & 0x3F]);
+            sb.append(i - 2 < data.length ? chars[(bitmap >> 6) & 0x3F] : '=');
+            sb.append(i - 1 < data.length ? chars[bitmap & 0x3F] : '=');
+        }
+        return sb.toString();
+    }
+
+    // 字节数组转十六进制字符串
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b & 0xFF));
+        }
+        return sb.toString();
     }
 
     private int utf8Size(String text) {
