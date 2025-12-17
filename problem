@@ -1,0 +1,31 @@
+要让 git mergetool 真正工作（两种方式）
+方式 A（推荐）：用真实分支合并制造冲突
+先看当前状态：
+git status
+建两个分支分别改同一行，然后合并（示例）：
+git checkout -b a# 编辑同一文件同一行，保存git add .git commit -m "a change"git checkout -b b main# 编辑同一文件同一行，保存git add .git commit -m "b change"git checkout agit merge b
+这时 git status 会显示冲突文件，然后再运行：
+git mergetool
+方式 B：只是演示冲突标记（不走 Git 合并）
+你现在这种情况只适合“看冲突标记长什么样”，但 git mergetool 不会启动。
+另外：你还没配置 mergetool
+即使进入真实冲突，Git 也提示你没配置工具。你可以先指定一个：
+git config --global merge.tool vimdiff
+（如果你装了 TortoiseGit，也可以配置 tortoisemerge。）
+or
+    // ========== 如何解决合并冲突 ==========
+    /*
+     * 解决步骤：
+     * 1. 打开冲突文件，找到 <<<<<<< HEAD 和 >>>>>>> 标记
+     * 2. 查看两个版本的差异
+     * 3. 选择保留哪个版本，或合并两个版本
+     * 4. 删除所有冲突标记（<<<<<<<, =======, >>>>>>>）
+     * 5. 保存文件
+     * 6. 使用 git add 标记冲突已解决
+     * 7. 继续合并：git commit
+     *
+     * IDE 工具（如 IntelliJ IDEA）通常提供可视化界面：
+     * - 点击 "Accept Yours" 保留当前分支
+     * - 点击 "Accept Theirs" 保留合并分支
+     * - 点击 "Merge" 手动合并
+     */
