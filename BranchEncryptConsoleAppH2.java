@@ -24,6 +24,10 @@ import java.util.Random;
  * 4. 查询最近记录,并估算"日均500笔、3年"的存储量
  * 
  * 运行前准备: 将 h2-*.jar 添加到 classpath
+ * 
+ * ⚠️ 注意: 此文件包含模拟的 Git 合并冲突标记
+ * 在解决冲突之前，此文件无法编译
+ * 请参考 MERGE_CONFLICT_GUIDE.md 了解如何解决冲突
  */
 public class BranchEncryptConsoleAppH2 {
     // ========== 配置区:根据实际环境修改 ==========
