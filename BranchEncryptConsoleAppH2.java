@@ -31,8 +31,14 @@ public class BranchEncryptConsoleAppH2 {
     private static final String DB_USER = "sa";
     private static final String DB_PASS = "";
 
+    // <<<<<<< HEAD
     private static final String AES_KEY_TEXT = "1234567890abcdef"; // 16/24/32 字节
     private static final String AES_IV_TEXT = "abcdef1234567890";  // 16 字节
+    // =======
+    // 来自 feature/security-hardening 分支：使用更安全的默认密钥
+    private static final String AES_KEY_TEXT = System.getProperty("aes.key", "defaultSecureKey123456789012345678901234"); // 32 字节默认密钥
+    private static final String AES_IV_TEXT = System.getProperty("aes.iv", "secureIV12345678");  // 16 字节
+    // >>>>>>> feature/security-hardening
 
     public static void main(String[] args) {
         System.out.println("=== 幸福路支行加密交易入库测试（H2数据库版，JDK17） ===");
@@ -222,6 +228,8 @@ public class BranchEncryptConsoleAppH2 {
 
     private static SecretKeySpec buildKey(String keyText) {
         byte[] bytes = keyText.getBytes(StandardCharsets.UTF_8);
+        // ========== 合并冲突开始 ==========
+        // <<<<<<< HEAD (当前分支)
         // 自动调整 Key 长度：如果不符合 16/24/32，则截取或填充
         if (bytes.length < 16) {
             byte[] padded = new byte[16];
@@ -244,6 +252,15 @@ public class BranchEncryptConsoleAppH2 {
             bytes = trimmed;
             System.out.println("提示: AES Key 长度超过 32 字节，已自动截取到 32 字节");
         }
+        // =======
+        // 严格验证 Key 长度，不符合要求则抛出异常（来自 feature/strict-validation 分支）
+        if (bytes.length != 16 && bytes.length != 24 && bytes.length != 32) {
+            throw new IllegalArgumentException(
+                String.format("AES Key 必须为 16/24/32 字节，当前为 %d 字节", bytes.length)
+            );
+        }
+        // >>>>>>> feature/strict-validation (合并的分支)
+        // ========== 合并冲突结束 ==========
         return new SecretKeySpec(bytes, "AES");
     }
 
